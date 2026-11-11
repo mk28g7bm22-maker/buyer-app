@@ -227,3 +227,200 @@
 
       <div class="grid-2">
         <div class="field"><label>Размер / Цвет</label><input type="text" id="size" placeholder="42 EU / Black" /></div>
+                <div class="field"><label>Цена в юанях (¥)</label><input type="number" id="cny" placeholder="650" oninput="recalc()" /></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="field"><label>Примерный вес (кг)</label><input type="number" id="weight" value="1" step="0.1" oninput="recalc()" /></div>
+        <div class="field">
+          <label>Реф. скидка на кг</label>
+          <select id="useRef" onchange="recalc()">
+            <option value="yes">Применить</option>
+            <option value="no">Сохранить</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="receipt" id="receiptBox"></div>
+      <button type="button" class="btn-main" id="sendBtn" onclick="sendRequest()">Отправить запрос менеджеру</button>
+    </div>
+  </div>
+
+  <div id="tab-miles" class="tab">
+    <div class="card">
+      <div class="sec-head">
+        <h2 class="sec-title">Километры доставки</h2>
+        <span class="badge-soft">100 ₽ = 1 км</span>
+      </div>
+      <p style="font-size:13px; color:var(--muted); margin:0; line-height:1.5;">
+        С каждой покупки копятся километры. При достижении <b>1 000 км</b> обменяйте их на <b>1 кг бесплатной доставки</b>.
+      </p>
+      <div class="route-bar"><div class="route-fill" id="kmFill" style="width:0%"></div></div>
+      <div class="route-meta"><span>Накоплено: <b id="kmLbl">0 км</b></span><span>Курс: <b>1 000 км = 1 кг</b></span></div>
+      <button type="button" class="btn-main" onclick="exchangeKm()">Обменять 1 000 км на 1 кг</button>
+    </div>
+
+    <div class="card">
+      <div class="sec-head">
+        <h2 class="sec-title">Приглашённые друзья (<span id="refCountTitle">0</span>)</h2>
+        <span class="badge-soft" id="refPctBadge">Кэшбэк: 50%</span>
+      </div>
+      <p style="font-size:13px; color:var(--muted); margin:0 0 12px; line-height:1.5;">
+        Получайте <b>50%+ от суммы доставки</b> каждого приглашённого друга в виде скидки на свои кг.
+      </p>
+      <div id="friendsList"></div>
+      <button type="button" class="btn-dark" onclick="shareLink()">Пригласить друга по ссылке</button>
+    </div>
+  </div>
+
+  <div id="tab-status" class="tab">
+    <div class="card">
+      <div class="sec-head"><h2 class="sec-title">Привилегии и статусы</h2></div>
+      <p style="font-size:13px; color:var(--muted); margin:0 0 14px; line-height:1.5;">
+        Статус повышается <b>автоматически</b> при накоплении общего веса выкупленных посылок.
+      </p>
+      <div class="tier-box" id="card-BRONZE">
+        <div class="tb-top"><span class="tb-name">🥉 BRONZE</span><span class="tb-req">От 0 кг</span></div>
+        <ul class="tb-list"><li>Скидка на доставку: <b>0%</b></li><li>С рефералов: <b>50%</b></li><li>Стандартный отклик</li></ul>
+      </div>
+      <div class="tier-box" id="card-SILVER">
+        <div class="tb-top"><span class="tb-name">🥈 SILVER</span><span class="tb-req">От 10 кг</span></div>
+        <ul class="tb-list"><li>Скидка на доставку: <b>5%</b></li><li>С рефералов: <b>60%</b></li><li>Ускоренный отклик</li></ul>
+      </div>
+      <div class="tier-box" id="card-GOLD">
+        <div class="tb-top"><span class="tb-name">🥇 GOLD</span><span class="tb-req">От 30 кг</span></div>
+        <ul class="tb-list"><li>Скидка на доставку: <b>10%</b></li><li>С рефералов: <b>70%</b></li><li>⚡ Приоритетный отклик</li></ul>
+      </div>
+      <div class="tier-box" id="card-VIP">
+        <div class="tb-top"><span class="tb-name">💎 BLACK VIP</span><span class="tb-req">От 70 кг</span></div>
+        <ul class="tb-list"><li>Скидка на доставку: <b>15%</b></li><li>С рефералов: <b>80%</b></li><li>🔥 VIP-отклик 24/7</li></ul>
+      </div>
+    </div>
+  </div>
+   <div class="nav">
+    <div class="nav-item active" id="nav-order" onclick="goTab('order')">🛍 Заказ</div>
+    <div class="nav-item" id="nav-miles" onclick="goTab('miles')">🛣 Путь и друзья</div>
+    <div class="nav-item" id="nav-status" onclick="goTab('status')">👑 Статусы</div>
+  </div>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+    tg.setHeaderColor('#090a0d');
+
+    const p = new URLSearchParams(window.location.search);
+    const rate = parseFloat(p.get('rate')) || 13.5;
+    const kgPrice = parseFloat(p.get('kg_price')) || 500;
+    const userKm = parseInt(p.get('km')) || 0;
+    const refRub = parseInt(p.get('ref_rub')) || 0;
+    const freeKg = parseInt(p.get('fkg')) || 0;
+    const totalKg = parseFloat(p.get('tkg')) || 0;
+    const refsCnt = parseInt(p.get('rcnt')) || 0;
+    const statusName = p.get('status') || 'BRONZE';
+    const statusDisc = parseInt(p.get('disc')) || 0;
+    const refPct = parseInt(p.get('ref_pct')) || 50;
+    const botUser = p.get('bot') || 'Buymanagebot';
+    const refsRaw = p.get('rlist') || '';
+
+    const user = tg.initDataUnsafe?.user;
+    if (user?.first_name) document.getElementById('uName').innerText = user.first_name;
+
+    let nextGoal = 'Максимальный статус';
+    if (totalKg < 10) nextGoal = `До Silver: ${(10 - totalKg).toFixed(1)} кг`;
+    else if (totalKg < 30) nextGoal = `До Gold: ${(30 - totalKg).toFixed(1)} кг`;
+    else if (totalKg < 70) nextGoal = `До VIP: ${(70 - totalKg).toFixed(1)} кг`;
+
+    document.getElementById('uSub').innerText = `Выкуплено: ${totalKg} кг • ${nextGoal}`;
+    document.getElementById('statusLabel').innerText = statusName;
+    document.getElementById('statusBtn').classList.add('st-' + statusName);
+
+    document.getElementById('mKm').innerText = `${userKm} км`;
+    document.getElementById('mKg').innerText = `${freeKg} кг`;
+    document.getElementById('mRefRub').innerText = `${refRub} ₽`;
+    document.getElementById('mRefsCnt').innerText = `${refsCnt}`;
+    document.getElementById('refCountTitle').innerText = `${refsCnt}`;
+    document.getElementById('kmLbl').innerText = `${userKm} км`;
+    document.getElementById('kmFill').style.width = `${Math.min(100, (userKm / 1000) * 100)}%`;
+    document.getElementById('refPctBadge').innerText = `Кэшбэк: ${refPct}%`;
+
+    const speeds = { BRONZE: 'Стандарт', SILVER: 'Ускоренный', GOLD: '⚡ Приоритет', VIP: '🔥 VIP 24/7' };
+    document.getElementById('speedBadge').innerText = speeds[statusName] || 'Стандарт';
+    const activeTier = document.getElementById('card-' + statusName);
+    if (activeTier) activeTier.classList.add('active');
+
+    const fBox = document.getElementById('friendsList');
+    if (refsRaw) {
+      fBox.innerHTML = refsRaw.split(';').filter(Boolean).map(row => {
+        const [fname, fkg, fsum] = row.split(':');
+        const bonus = Math.round((parseFloat(fsum) || 0) * (refPct / 100));
+        return `<div class="friend-row"><div><div class="friend-name">👤 ${fname}</div><div class="friend-sub">Заказал: ${fkg || 0} кг (на ${fsum || 0} ₽)</div></div><div class="friend-bonus">+${bonus} ₽</div></div>`;
+      }).join('');
+    } else {
+      fBox.innerHTML = `<div style="font-size:12px; color:var(--muted); text-align:center; padding:12px; background:var(--glass); border-radius:12px;">Пока нет приглашённых друзей с заказами.</div>`;
+    }
+
+    function goTab(id) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + id).classList.add('active');
+      document.getElementById('nav-' + id).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function openStatusTab() { goTab('status'); }
+
+    function recalc() {
+      const cny = parseFloat(document.getElementById('cny').value) || 0;
+      const w = parseFloat(document.getElementById('weight').value) || 0;
+      const useRef = document.getElementById('useRef').value === 'yes';
+      const goods = Math.round(cny * rate);
+      const delivRaw = Math.round(w * kgPrice);
+      const discRub = Math.round(delivRaw * (statusDisc / 100));
+      const appliedRef = useRef ? Math.min(refRub, delivRaw - discRub) : 0;
+      const finalDeliv = Math.max(0, delivRaw - discRub - appliedRef);
+      const total = goods + finalDeliv;
+      document.getElementById('receiptBox').innerHTML = `
+        <div class="r-line"><span>Вещь (${cny} ¥ × ${rate} ₽):</span><b>${goods} ₽</b></div>
+        <div class="r-line"><span>Доставка (${w} кг × ${kgPrice} ₽):</span><b>${delivRaw} ₽</b></div>
+        <div class="r-line"><span>Скидка статуса (${statusDisc}%) + реф:</span><b style="color:#10b981;">-${discRub + appliedRef} ₽</b></div>
+        <div class="r-sum"><span>Итого к оплате:</span><span>~${total} ₽</span></div>
+      `;
+      return total;
+    }
+
+    function sendRequest() {
+      const item = document.getElementById('item').value.trim();
+      if (!item) { tg.showAlert('Укажите название или описание вещи!'); return; }
+      const btn = document.getElementById('sendBtn');
+      btn.innerText = 'Отправка...'; btn.disabled = true;
+      const dataStr = JSON.stringify({
+        a: 'ord',
+        i: item.slice(0, 120),
+        l: document.getElementById('link').value.trim().slice(0, 220) || 'Не указана',
+        s: document.getElementById('size').value.trim().slice(0, 40) || 'Не указан',
+        c: document.getElementById('cny').value || '0',
+        w: document.getElementById('weight').value || '1',
+        t: recalc(),
+        st: statusName
+      });
+      tg.sendData(dataStr);
+    }
+
+    function exchangeKm() {
+      if (userKm < 1000) { tg.showAlert(`Недостаточно километров! У вас ${userKm} км, нужно 1 000 км.`); return; }
+      tg.sendData(JSON.stringify({ a: 'km' }));
+    }
+
+    function shareLink() {
+      const uid = user?.id || '';
+      const refUrl = `https://t.me{botUser}?start=ref_${uid}`;
+      const msg = encodeURIComponent('Заказываю оригинальные вещи с выкупом и доставкой! Лови ссылку:');
+      tg.openTelegramLink(`https://t.me{encodeURIComponent(refUrl)}&text=${msg}`);
+    }
+
+    recalc();
+  </script>
+</body>
+</html>
+ 
+
