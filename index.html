@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Buyer Club Mini App</title>
+  <script src="https://telegram.org"></script>
+  <style>
+    :root {
+      --bg: var(--tg-theme-bg-color, #0f1115);
+      --card: var(--tg-theme-secondary-bg-color, #181b22);
+      --text: var(--tg-theme-text-color, #ffffff);
+      --hint: var(--tg-theme-hint-color, #8e95a5);
+      --accent: var(--tg-theme-button-color, #3b82f6);
+      --accent-text: var(--tg-theme-button-text-color, #ffffff);
+      --border: rgba(255, 255, 255, 0.08);
+      --gold: linear-gradient(135deg, #f59e0b, #d97706);
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      margin: 0; padding: 14px 14px 84px;
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', Roboto, sans-serif;
+      background: var(--bg); color: var(--text);
+    }
+
+    .header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .user-info h1 { margin: 0; font-size: 20px; font-weight: 700; }
+    .user-info p { margin: 2px 0 0; font-size: 13px; color: var(--hint); }
+    .status-pill {
+      padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700;
+      background: var(--gold); color: #fff; letter-spacing: 0.3px;
+    }
+
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 16px; margin-bottom: 12px;
+    }
+    .card-title {
+      font-size: 16px; font-weight: 700; margin: 0 0 10px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px;
+    }
+    .stat-box {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 10px 8px; text-align: center;
+    }
+    .stat-val { font-size: 16px; font-weight: 800; color: var(--text); }
+    .stat-lbl { font-size: 11px; color: var(--hint); margin-top: 3px; }
+
+    .progress-wrap {
+      background: rgba(255,255,255,0.08); height: 10px; border-radius: 99px;
+      overflow: hidden; margin: 10px 0 6px;
+    }
+    .progress-fill {
+      height: 100%; background: linear-gradient(90deg, #3b82f6, #10b981);
+      border-radius: 99px; transition: width 0.4s ease;
+    }
+    .progress-meta {
+      display: flex; justify-content: space-between; font-size: 12px; color: var(--hint);
+    }
+
+    label { display: block; font-size: 12px; color: var(--hint); margin: 10px 0 4px; }
+    input, select {
+      width: 100%; padding: 12px; border-radius: 12px;
+      border: 1px solid var(--border); background: var(--bg);
+      color: var(--text); font-size: 15px; outline: none;
+    }
+    input:focus { border-color: var(--accent); }
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .summary-box {
+      margin-top: 12px; padding: 12px; border-radius: 12px;
+      background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.25);
+      font-size: 13px; line-height: 1.5;
+    }
+    .summary-total {
+      font-size: 18px; font-weight: 800; margin-top: 4px; color: #60a5fa;
+    }
+
+    .btn {
+      width: 100%; padding: 14px; border: none; border-radius: 14px;
+      background: var(--accent); color: var(--accent-text);
+      font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 12px;
+      transition: opacity 0.2s;
+    }
+    .btn:active { opacity: 0.85; }
+    .btn-outline {
+      background: transparent; border: 1px solid var(--accent); color: var(--accent);
+    }
+
+    .tier {
+      border: 1px solid var(--border); border-radius: 14px; padding: 14px;
+      margin-bottom: 10px; position: relative;
+    }
+    .tier.active {
+      border-color: #f59e0b; background: rgba(245, 158, 11, 0.08);
+    }
+    .tier-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .tier-name { font-weight: 800; font-size: 15px; }
+    .tier-req { font-size: 12px; color: var(--hint); }
+    .tier ul { margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.6; color: var(--text); }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: var(--card); border-top: 1px solid var(--border);
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      padding: 8px 0 calc(8px + env(safe-area-inset-bottom)); z-index: 100;
+    }
+    .nav-item {
+      text-align: center; font-size: 11px; color: var(--hint);
+      cursor: pointer; font-weight: 600;
+    }
+    .nav-item.active { color: var(--accent); }
+    .nav-icon { font-size: 20px; display: block; margin-bottom: 2px; }
+
+    .badge-green {
+      background: rgba(16, 185, 129, 0.15); color: #34d399;
+      padding: 3px 8px; border-radius: 8px; font-size: 11px; font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="user-info">
+      <h1 id="greeting">Привет! 👋</h1>
+      <p>Твой персональный байер-сервис</p>
+    </div>
+    <div class="status-pill" id="userBadge">⭐ SILVER</div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-box">
+      <div class="stat-val" id="kmVal">1 400 км</div>
+      <div class="stat-lbl">Накоплено</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val" id="refRubVal">225 ₽</div>
+      <div class="stat-lbl">Реф. скидка на кг</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val" id="freeKgVal">1 кг</div>
+      <div class="stat-lbl">Доступно за км</div>
+    </div>
+  </div>
+
+  <div id="tab-order" class="tab-content active">
+    <div class="card">
+      <div class="card-title">
+        <span>🔍 Найти и заказать вещь</span>
+        <span class="badge-green" id="priorityTag">⚡ Приоритет</span>
+      </div>
+      <p style="font-size:13px; color:var(--hint); margin:0 0 8px;">
+        Заполните параметры — заявка мгновенно улетит менеджеру в чат.
+      </p>
+
+      <label>Что ищем? (название или описание) *</label>
+      <input type="text" id="item" placeholder="Например: Кроссовки New Balance 9060" />
+
+      <label>Ссылка на товар (Poizon / Taobao / 1688)</label>
+      <input type="text" id="link" placeholder="https://..." />
+
+      <div class="row-2">
+        <div>
+          <label>Размер / Цвет</label>
+          <input type="text" id="size" placeholder="42 EU / Серый" />
+        </div>
+        <div>
+          <label>Цена в юанях (¥)</label>
+          <input type="number" id="cny" placeholder="550" oninput="recalc()" />
+        </div>
+      </div>
+
+      <div class="row-2">
+        <div>
+          <label>Примерный вес (кг)</label>
+          <input type="number" id="weight" value="1.5" step="0.1" oninput="recalc()" />
+        </div>
+        <div>
+          <label>Списать реф. скидку</label>
+          <select id="useRef" onchange="recalc()">
+            <option value="yes">Да (до 225 ₽)</option>
+            <option value="no">Не списывать</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="summary-box" id="calcBox">
+        <div>Товар: <b>0 ₽</b> | Доставка: <b>750 ₽</b></div>
+        <div>Скидка статуса (<span id="stDiscLbl">5%</span>) + реф. бонус: <b>-0 ₽</b></div>
+        <div class="summary-total" id="totalRub">Итого: ~0 ₽</div>
+      </div>
+
+      <button class="btn" onclick="submitOrder()">🚀 Отправить запрос менеджеру</button>
+    </div>
+  </div>
+
+  <div id="tab-miles" class="tab-content">
+    <div class="card">
+      <div class="card-title">
+        <span>🛣 Километры за покупки</span>
+        <span class="badge-green">100 ₽ = 1 км</span>
+      </div>
+      <p style="font-size:13px; color:var(--hint); margin:0;">
+        С каждой покупки копятся километры. При достижении <b>1 000 км</b> вы можете обменять их на <b>1 кг бесплатной доставки</b>!
+      </p>
+
+      <div class="progress-wrap">
+        <div class="progress-fill" id="kmBar" style="width: 70%;"></div>
+      </div>
+      <div class="progress-meta">
+        <span>Накоплено: <b id="kmCurrent">1 400 км</b></span>
+        <span>Цель: <b>1 000 км = 1 кг</b></span>
+      </div>
+
+      <button class="btn" onclick="exchangeKm()">🔄 Обменять 1 000 км на 1 кг доставки</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <span>🤝 Реферальная программа</span>
+        <span class="badge-green" id="refPctBadge">Ваш кэшбэк: 50%</span>
+      </div>
+      <p style="font-size:13px; color:var(--hint); margin:0 0 10px;">
+        Когда приглашённый друг оплачивает доставку любого веса, вы получаете <b>50% от суммы его доставки</b> в виде скидки на свои килограммы!
+      </p>
+
+      <div style="background:var(--bg); padding:12px; border-radius:12px; border:1px solid var(--border);">
+        <div style="font-size:12px; color:var(--hint); margin-bottom:6px;">🧮 Пример вашей выгоды (вес заказа друга):</div>
+        <input type="range" id="friendKg" min="1" max="15" value="3" oninput="calcRefExample()" />
+        <div style="font-size:13px; margin-top:6px;" id="refExampleText">
+          Друг заказал <b>3 кг</b> × 50 ₽/кг = 150 ₽ → Ваша скидка: <b style="color:#34d399;">75 ₽</b>
+        </div>
+      </div>
+
+      <button class="btn btn-outline" onclick="shareRef()">🔗 Пригласить друга и копить скидку</button>
+    </div>
+  </div>
+
+  <div id="tab-status" class="tab-content">
+    <div class="card">
+      <div class="card-title">
+        <span>👑 Статусы и привилегии</span>
+      </div>
+      <p style="font-size:13px; color:var(--hint); margin:0 0 12px;">
+        Повышайте статус за счёт суммарного веса выкупленных посылок или обменяйте километры на апгрейд уровня.
+      </p>
+
+      <div class="tier">
+        <div class="tier-head">
+          <span class="tier-name">🥉 BRONZE (Базовый)</span>
+          <span class="tier-req">Старт</span>
+        </div>
