@@ -413,10 +413,12 @@
 
     function shareLink() {
       const uid = user?.id || '';
-      const refUrl = `https://t.me{botUser}?start=ref_${uid}`;
+            const refUrl = 'https:/' + '/t.me/' + botUser + '?start=ref_' + uid;
       const msg = encodeURIComponent('Заказываю оригинальные вещи с выкупом и доставкой! Лови ссылку:');
-      tg.openTelegramLink(`https://t.me{encodeURIComponent(refUrl)}&text=${msg}`);
-    }
+      tg.openTelegramLink('https:/' + '/t.me/share/url?url=' + encodeURIComponent(refUrl) + '&text=' + msg);
+
+                
+
 
     recalc();
   </script>
