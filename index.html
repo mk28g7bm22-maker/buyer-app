@@ -1,428 +1,133 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>BUYER ATELIER</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <style>
-    :root {
-      --bg: #090a0d;
-      --card: rgba(20, 22, 29, 0.9);
-      --glass: rgba(255, 255, 255, 0.035);
-      --border: rgba(255, 255, 255, 0.08);
-      --text: #f8fafc;
-      --muted: #94a3b8;
-      --accent: #e2e8f0;
-      --gold: #d4af37;
-      --emerald: #10b981;
-    }
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    body {
-      margin: 0; padding: 16px 16px 110px;
-      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif;
-      background:
-        radial-gradient(circle at 85% 5%, rgba(212, 175, 55, 0.12) 0%, transparent 40%),
-        radial-gradient(circle at 10% 35%, rgba(59, 130, 246, 0.1) 0%, transparent 45%),
-        var(--bg);
-      color: var(--text); min-height: 100vh;
-    }
-
-    .brand-bar {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 14px; padding: 0 2px;
-    }
-    .brand-logo {
-      display: flex; align-items: center; gap: 8px;
-      font-size: 13px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
-      color: var(--accent);
-    }
-    .brand-tag {
-      font-size: 11px; color: var(--muted); letter-spacing: 0.4px;
-    }
-
-    .member-card {
-      background: linear-gradient(145deg, #161922 0%, #0d0f14 100%);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 24px; padding: 20px; margin-bottom: 16px;
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
-      position: relative; overflow: hidden;
-    }
-    .member-card::before {
-      content: ''; position: absolute; top: -50%; left: -20%;
-      width: 220px; height: 220px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(212, 175, 55, 0.14) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .mc-top { display: flex; justify-content: space-between; align-items: flex-start; }
-    .mc-user { font-size: 21px; font-weight: 700; letter-spacing: -0.3px; margin: 0; }
-    .mc-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
-
-    .status-btn {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 7px 14px; border-radius: 99px; font-size: 11px; font-weight: 800;
-      letter-spacing: 0.9px; text-transform: uppercase; cursor: pointer;
-      background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2);
-      color: #fff; transition: transform 0.15s;
-    }
-    .status-btn:active { transform: scale(0.95); }
-    .st-SILVER { background: linear-gradient(135deg, #475569, #94a3b8); border-color: #cbd5e1; }
-    .st-GOLD { background: linear-gradient(135deg, #b45309, #f59e0b); color: #090a0d; border-color: #fde68a; }
-    .st-VIP { background: linear-gradient(135deg, #6d28d9, #db2777); border-color: #f472b6; }
-
-    .mc-grid {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
-      margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border);
-    }
-    .mc-val { font-size: 15px; font-weight: 800; color: #fff; }
-    .mc-lbl { font-size: 10px; color: var(--muted); margin-top: 3px; text-transform: uppercase; letter-spacing: 0.3px; }
-
-    .card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 22px; padding: 18px; margin-bottom: 14px;
-    }
-    .sec-head {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 14px;
-    }
-    .sec-title {
-      display: flex; align-items: center; gap: 8px;
-      font-size: 16px; font-weight: 700; margin: 0;
-    }
-    .badge-soft {
-      font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 99px;
-      background: rgba(212, 175, 55, 0.14); color: #facc15; border: 1px solid rgba(212, 175, 55, 0.25);
-    }
-
-    .field { margin-bottom: 12px; }
-    .field label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
-    input, select {
-      width: 100%; padding: 13px 14px; border-radius: 14px;
-      border: 1px solid var(--border); background: rgba(9, 10, 13, 0.85);
-      color: var(--text); font-size: 15px; outline: none;
-    }
-    input:focus, select:focus { border-color: var(--gold); }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-
-    .receipt {
-      background: var(--glass); border: 1px solid var(--border);
-      border-radius: 16px; padding: 14px; margin-top: 14px;
-    }
-    .r-line { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
-    .r-line b { color: var(--text); }
-    .r-sum {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.14);
-      font-size: 14px; font-weight: 700;
-    }
-    .r-sum span:last-child { font-size: 20px; font-weight: 800; color: #facc15; }
-
-    .btn-main {
-      width: 100%; padding: 15px; border: none; border-radius: 15px;
-      background: linear-gradient(135deg, #f8fafc 0%, #cbd5e1 100%);
-      color: #090a0d; font-size: 15px; font-weight: 800; cursor: pointer;
-      margin-top: 14px; letter-spacing: 0.2px; position: relative; z-index: 10;
-    }
-    .btn-main:active { opacity: 0.85; transform: scale(0.99); }
-    .btn-dark {
-      width: 100%; padding: 14px; border-radius: 15px;
-      background: rgba(255,255,255,0.06); border: 1px solid var(--border);
-      color: var(--text); font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 10px;
-    }
-
-    .route-bar {
-      background: rgba(255,255,255,0.08); height: 8px; border-radius: 99px;
-      overflow: hidden; margin: 12px 0 8px;
-    }
-    .route-fill {
-      height: 100%; background: linear-gradient(90deg, #d4af37, #10b981); border-radius: 99px;
-    }
-    .route-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
-
-    .friend-row {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 11px 12px; border-radius: 13px; background: var(--glass);
-      border: 1px solid var(--border); margin-bottom: 8px; font-size: 13px;
-    }
-    .friend-name { font-weight: 700; color: #fff; }
-    .friend-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
-    .friend-bonus { font-weight: 800; color: var(--emerald); text-align: right; }
-
-    .tier-box {
-      border: 1px solid var(--border); border-radius: 18px; padding: 15px;
-      margin-bottom: 10px; background: var(--glass);
-    }
-    .tier-box.active {
-      border-color: var(--gold); background: rgba(212, 175, 55, 0.08);
-    }
-    .tb-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-    .tb-name { font-size: 15px; font-weight: 800; }
-    .tb-req { font-size: 11px; color: var(--muted); background: rgba(255,255,255,0.07); padding: 3px 9px; border-radius: 8px; }
-    .tb-list { margin: 0; padding-left: 16px; font-size: 13px; color: #cbd5e1; line-height: 1.65; }
-
-    .tab { display: none; }
-    .tab.active { display: block; }
-
-    .nav {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      background: rgba(11, 13, 18, 0.95); backdrop-filter: blur(20px);
-      border-top: 1px solid var(--border);
-      display: grid; grid-template-columns: repeat(3, 1fr);
-      padding: 10px 0 calc(10px + env(safe-area-inset-bottom)); z-index: 99;
-    }
-    .nav-item {
-      display: flex; flex-direction: column; align-items: center; gap: 4px;
-      font-size: 11px; color: var(--muted); font-weight: 600; cursor: pointer;
-    }
-    .nav-item.active { color: #facc15; }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>BUYER ATELIER</title>
+<script src="https://telegram.org"></script>
+<style>
+:root{--bg:#090a0d;--card:#14161d;--glass:rgba(255,255,255,.04);--border:rgba(255,255,255,.09);--text:#f8fafc;--muted:#94a3b8;--gold:#d4af37;--emerald:#10b981}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;padding:16px 16px 100px;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;background:radial-gradient(circle at 85% 5%,rgba(212,175,55,.12),transparent 40%),var(--bg);color:var(--text)}
+.brand{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:#e2e8f0;font-weight:800}
+.brand span{font-size:11px;color:var(--muted);letter-spacing:0;text-transform:none;font-weight:400}
+.mcard{background:linear-gradient(145deg,#181c26,#0d0f14);border:1px solid rgba(255,255,255,.14);border-radius:22px;padding:18px;margin-bottom:14px;box-shadow:0 14px 34px rgba(0,0,0,.5)}
+.mtop{display:flex;justify-content:space-between;align-items:flex-start}
+.mname{font-size:20px;font-weight:700;margin:0}
+.msub{font-size:12px;color:var(--muted);margin-top:4px}
+.sbtn{padding:7px 13px;border-radius:99px;font-size:11px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;cursor:pointer;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);color:#fff}
+.st-SILVER{background:linear-gradient(135deg,#475569,#94a3b8)}
+.st-GOLD{background:linear-gradient(135deg,#b45309,#f59e0b);color:#090a0d}
+.st-VIP{background:linear-gradient(135deg,#6d28d9,#db2777)}
+.mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)}
+.mval{font-size:15px;font-weight:800}
+.mlbl{font-size:10px;color:var(--muted);margin-top:2px;text-transform:uppercase}
+.card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:16px;margin-bottom:14px}
+.shead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.stitle{font-size:16px;font-weight:700;margin:0}
+.pill{font-size:11px;font-weight:600;padding:4px 10px;border-radius:99px;background:rgba(212,175,55,.14);color:#facc15}
+.fld{margin-bottom:11px}
+.fld label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}
+input,select{width:100%;padding:12px 13px;border-radius:13px;border:1px solid var(--border);background:#090a0d;color:var(--text);font-size:15px;outline:none}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rec{background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:13px;margin-top:12px}
+.rline{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-bottom:5px}
+.rline b{color:var(--text)}
+.rsum{display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-top:8px;border-top:1px dashed rgba(255,255,255,.15);font-weight:700}
+.rsum span:last-child{font-size:19px;font-weight:800;color:#facc15}
+.btn{width:100%;padding:14px;border:none;border-radius:14px;background:linear-gradient(135deg,#f8fafc,#cbd5e1);color:#090a0d;font-size:15px;font-weight:800;cursor:pointer;margin-top:12px}
+.btnd{width:100%;padding:13px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--text);font-size:14px;font-weight:700;cursor:pointer;margin-top:10px}
+.bar{background:rgba(255,255,255,.08);height:8px;border-radius:99px;overflow:hidden;margin:10px 0 6px}
+.fill{height:100%;background:linear-gradient(90deg,#d4af37,#10b981)}
+.frow{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-radius:12px;background:var(--glass);border:1px solid var(--border);margin-bottom:8px;font-size:13px}
+.tbox{border:1px solid var(--border);border-radius:16px;padding:14px;margin-bottom:10px;background:var(--glass)}
+.tbox.active{border-color:var(--gold);background:rgba(212,175,55,.08)}
+.ttop{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-weight:800}
+.treq{font-size:11px;color:var(--muted);background:rgba(255,255,255,.07);padding:3px 8px;border-radius:7px;font-weight:500}
+.tlist{margin:0;padding-left:16px;font-size:13px;color:#cbd5e1;line-height:1.6}
+.tab{display:none}.tab.active{display:block}
+.nav{position:fixed;bottom:0;left:0;right:0;background:rgba(11,13,18,.96);border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(3,1fr);padding:10px 0 calc(10px + env(safe-area-inset-bottom));z-index:99}
+.nitem{text-align:center;font-size:11px;color:var(--muted);font-weight:600;cursor:pointer}
+.nitem.active{color:#facc15}
+.nitem div{font-size:18px;margin-bottom:2px}
+</style>
 </head>
 <body>
+<div class="brand">🛍 BUYER ATELIER <span>Concierge & Logistics</span></div>
 
-  <div class="brand-bar">
-    <div class="brand-logo">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-      BUYER ATELIER
-    </div>
-    <div class="brand-tag">Concierge & Logistics</div>
+<div class="mcard">
+  <div class="mtop">
+    <div><h1 class="mname" id="uName">Клиент клуба</h1><div class="msub" id="uSub">Выкуплено: 0 кг • До Silver: 10 кг</div></div>
+    <button type="button" class="sbtn" id="sBtn" onclick="goTab('status')"><span id="sLbl">BRONZE</span> ▾</button>
   </div>
-
-  <div class="member-card">
-    <div class="mc-top">
-      <div>
-        <h1 class="mc-user" id="uName">Клиент клуба</h1>
-        <div class="mc-sub" id="uSub">Выкуплено: 0 кг • До Silver: 10 кг</div>
-      </div>
-      <button type="button" class="status-btn" id="statusBtn" onclick="openStatusTab()">
-        <span id="statusLabel">BRONZE</span> ▾
-      </button>
-    </div>
-    <div class="mc-grid">
-      <div><div class="mc-val" id="mKm">0 км</div><div class="mc-lbl">Путь</div></div>
-      <div><div class="mc-val" id="mKg">0 кг</div><div class="mc-lbl">За км</div></div>
-      <div><div class="mc-val" id="mRefRub">0 ₽</div><div class="mc-lbl">Скидка</div></div>
-      <div><div class="mc-val" id="mRefsCnt">0</div><div class="mc-lbl">Друзей</div></div>
-    </div>
+  <div class="mgrid">
+    <div><div class="mval" id="mKm">0 км</div><div class="mlbl">Путь</div></div>
+    <div><div class="mval" id="mKg">0 кг</div><div class="mlbl">За км</div></div>
+    <div><div class="mval" id="mRef">0 ₽</div><div class="mlbl">Скидка</div></div>
+    <div><div class="mval" id="mCnt">0</div><div class="mlbl">Друзей</div></div>
   </div>
+</div>
 
-  <div id="tab-order" class="tab active">
-    <div class="card">
-      <div class="sec-head">
-        <h2 class="sec-title">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#facc15" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
-          Запрос на выкуп
-        </h2>
-        <span class="badge-soft" id="speedBadge">Стандарт</span>
-      </div>
-
-      <div class="field">
-        <label>Название модели или описание *</label>
-        <input type="text" id="item" placeholder="Например: Maison Margiela Replica" />
-      </div>
-
-      <div class="field">
-        <label>Ссылка на товар (Poizon / Taobao / 1688)</label>
-        <input type="url" id="link" placeholder="https://..." />
-      </div>
-
-      <div class="grid-2">
-        <div class="field"><label>Размер / Цвет</label><input type="text" id="size" placeholder="42 EU / Black" /></div>
-                <div class="field"><label>Цена в юанях (¥)</label><input type="number" id="cny" placeholder="650" oninput="recalc()" /></div>
-      </div>
-
-      <div class="grid-2">
-        <div class="field"><label>Примерный вес (кг)</label><input type="number" id="weight" value="1" step="0.1" oninput="recalc()" /></div>
-        <div class="field">
-          <label>Реф. скидка на кг</label>
-          <select id="useRef" onchange="recalc()">
-            <option value="yes">Применить</option>
-            <option value="no">Сохранить</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="receipt" id="receiptBox"></div>
-      <button type="button" class="btn-main" id="sendBtn" onclick="sendRequest()">Отправить запрос менеджеру</button>
+<div id="tab-order" class="tab active">
+  <div class="card">
+    <div class="shead"><h2 class="stitle">Запрос на выкуп</h2><span class="pill" id="spd">Стандарт</span></div>
+    <div class="fld"><label>Название модели или описание *</label><input type="text" id="item" placeholder="Например: Nike Dunk Low" /></div>
+    <div class="fld"><label>Ссылка на товар (Poizon / Taobao / 1688)</label><input type="text" id="link" placeholder="Вставьте ссылку..." /></div>
+    <div class="g2">
+      <div class="fld"><label>Размер / Цвет</label><input type="text" id="size" placeholder="42 EU / Black" /></div>
+      <div class="fld"><label>Цена в юанях (¥)</label><input type="number" id="cny" placeholder="650" oninput="recalc()" /></div>
     </div>
-  </div>
-
-  <div id="tab-miles" class="tab">
-    <div class="card">
-      <div class="sec-head">
-        <h2 class="sec-title">Километры доставки</h2>
-        <span class="badge-soft">100 ₽ = 1 км</span>
-      </div>
-      <p style="font-size:13px; color:var(--muted); margin:0; line-height:1.5;">
-        С каждой покупки копятся километры. При достижении <b>1 000 км</b> обменяйте их на <b>1 кг бесплатной доставки</b>.
-      </p>
-      <div class="route-bar"><div class="route-fill" id="kmFill" style="width:0%"></div></div>
-      <div class="route-meta"><span>Накоплено: <b id="kmLbl">0 км</b></span><span>Курс: <b>1 000 км = 1 кг</b></span></div>
-      <button type="button" class="btn-main" onclick="exchangeKm()">Обменять 1 000 км на 1 кг</button>
+    <div class="g2">
+      <div class="fld"><label>Примерный вес (кг)</label><input type="number" id="weight" value="1" step="0.1" oninput="recalc()" /></div>
+      <div class="fld"><label>Реф. скидка на кг</label><select id="useRef" onchange="recalc()"><option value="yes">Применить</option><option value="no">Сохранить</option></select></div>
     </div>
-
-    <div class="card">
-      <div class="sec-head">
-        <h2 class="sec-title">Приглашённые друзья (<span id="refCountTitle">0</span>)</h2>
-        <span class="badge-soft" id="refPctBadge">Кэшбэк: 50%</span>
-      </div>
-      <p style="font-size:13px; color:var(--muted); margin:0 0 12px; line-height:1.5;">
-        Получайте <b>50%+ от суммы доставки</b> каждого приглашённого друга в виде скидки на свои кг.
-      </p>
-      <div id="friendsList"></div>
-      <button type="button" class="btn-dark" onclick="shareLink()">Пригласить друга по ссылке</button>
-    </div>
+    <div class="rec" id="recBox"></div>
+    <button type="button" class="btn" id="sendBtn" onclick="sendReq()">Отправить запрос менеджеру</button>
   </div>
+</div>
 
-  <div id="tab-status" class="tab">
-    <div class="card">
-      <div class="sec-head"><h2 class="sec-title">Привилегии и статусы</h2></div>
-      <p style="font-size:13px; color:var(--muted); margin:0 0 14px; line-height:1.5;">
-        Статус повышается <b>автоматически</b> при накоплении общего веса выкупленных посылок.
-      </p>
-      <div class="tier-box" id="card-BRONZE">
-        <div class="tb-top"><span class="tb-name">🥉 BRONZE</span><span class="tb-req">От 0 кг</span></div>
-        <ul class="tb-list"><li>Скидка на доставку: <b>0%</b></li><li>С рефералов: <b>50%</b></li><li>Стандартный отклик</li></ul>
-      </div>
-      <div class="tier-box" id="card-SILVER">
-        <div class="tb-top"><span class="tb-name">🥈 SILVER</span><span class="tb-req">От 10 кг</span></div>
-        <ul class="tb-list"><li>Скидка на доставку: <b>5%</b></li><li>С рефералов: <b>60%</b></li><li>Ускоренный отклик</li></ul>
-      </div>
-      <div class="tier-box" id="card-GOLD">
-        <div class="tb-top"><span class="tb-name">🥇 GOLD</span><span class="tb-req">От 30 кг</span></div>
-        <ul class="tb-list"><li>Скидка на доставку: <b>10%</b></li><li>С рефералов: <b>70%</b></li><li>⚡ Приоритетный отклик</li></ul>
-      </div>
-      <div class="tier-box" id="card-VIP">
-        <div class="tb-top"><span class="tb-name">💎 BLACK VIP</span><span class="tb-req">От 70 кг</span></div>
-        <ul class="tb-list"><li>Скидка на доставку: <b>15%</b></li><li>С рефералов: <b>80%</b></li><li>🔥 VIP-отклик 24/7</li></ul>
-      </div>
-    </div>
+<div id="tab-miles" class="tab">
+  <div class="card">
+    <div class="shead"><h2 class="stitle">Километры доставки</h2><span class="pill">100 ₽ = 1 км</span></div>
+    <p style="font-size:13px;color:var(--muted);margin:0 0 8px">Накопите <b>1 000 км</b> и обменяйте их на <b>1 кг бесплатной доставки</b>.</p>
+    <div class="bar"><div class="fill" id="kmFill" style="width:0%"></div></div>
+    <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted)"><span>Накоплено: <b id="kmLbl">0 км</b></span><span>1 000 км = 1 кг</span></div>
+    <button type="button" class="btn" onclick="exKm()">Обменять 1 000 км на 1 кг</button>
   </div>
-   <div class="nav">
-    <div class="nav-item active" id="nav-order" onclick="goTab('order')">🛍 Заказ</div>
-    <div class="nav-item" id="nav-miles" onclick="goTab('miles')">🛣 Путь и друзья</div>
-    <div class="nav-item" id="nav-status" onclick="goTab('status')">👑 Статусы</div>
+  <div class="card">
+    <div class="shead"><h2 class="stitle">Друзья (<span id="rTit">0</span>)</h2><span class="pill" id="rPct">Кэшбэк: 50%</span></div>
+    <div id="fList"></div>
+    <button type="button" class="btnd" onclick="shareRef()">Пригласить друга по ссылке</button>
   </div>
+</div>
 
-  <script>
-    const tg = window.Telegram.WebApp;
-    tg.expand();
-    tg.setHeaderColor('#090a0d');
+<div id="tab-status" class="tab">
+  <div class="card">
+    <div class="shead"><h2 class="stitle">Уровни привилегий</h2></div>
+    <p style="font-size:13px;color:var(--muted);margin:0 0 12px">Статус повышается <b>автоматически</b> от общего веса ваших посылок.</p>
+    <div class="tbox" id="c-BRONZE"><div class="ttop"><span>🥉 BRONZE</span><span class="treq">От 0 кг</span></div><ul class="tlist"><li>Скидка на доставку: <b>0%</b></li><li>С рефералов: <b>50%</b></li></ul></div>
+    <div class="tbox" id="c-SILVER"><div class="ttop"><span>🥈 SILVER</span><span class="treq">От 10 кг</span></div><ul class="tlist"><li>Скидка на доставку: <b>5%</b></li><li>С рефералов: <b>60%</b></li><li>Ускоренный отклик</li></ul></div>
+    <div class="tbox" id="c-GOLD"><div class="ttop"><span>🥇 GOLD</span><span class="treq">От 30 кг</span></div><ul class="tlist"><li>Скидка на доставку: <b>10%</b></li><li>С рефералов: <b>70%</b></li><li>⚡ Приоритетный отклик</li></ul></div>
+    <div class="tbox" id="c-VIP"><div class="ttop"><span>💎 BLACK VIP</span><span class="treq">От 70 кг</span></div><ul class="tlist"><li>Скидка на доставку: <b>15%</b></li><li>С рефералов: <b>80%</b></li><li>🔥 VIP-отклик 24/7</li></ul></div>
+  </div>
+</div>
 
-    const p = new URLSearchParams(window.location.search);
-    const rate = parseFloat(p.get('rate')) || 13.5;
-    const kgPrice = parseFloat(p.get('kg_price')) || 500;
-    const userKm = parseInt(p.get('km')) || 0;
-    const refRub = parseInt(p.get('ref_rub')) || 0;
-    const freeKg = parseInt(p.get('fkg')) || 0;
-    const totalKg = parseFloat(p.get('tkg')) || 0;
-    const refsCnt = parseInt(p.get('rcnt')) || 0;
-    const statusName = p.get('status') || 'BRONZE';
-    const statusDisc = parseInt(p.get('disc')) || 0;
-    const refPct = parseInt(p.get('ref_pct')) || 50;
-    const botUser = p.get('bot') || 'Buymanagebot';
-    const refsRaw = p.get('rlist') || '';
+<div class="nav">
+  <div class="nitem active" id="n-order" onclick="goTab('order')"><div>🛍</div>Заказ</div>
+  <div class="nitem" id="n-miles" onclick="goTab('miles')"><div>🛣</div>Путь и друзья</div>
+  <div class="nitem" id="n-status" onclick="goTab('status')"><div>👑</div>Статусы</div>
+</div>
 
-    const user = tg.initDataUnsafe?.user;
-    if (user?.first_name) document.getElementById('uName').innerText = user.first_name;
-
-    let nextGoal = 'Максимальный статус';
-    if (totalKg < 10) nextGoal = `До Silver: ${(10 - totalKg).toFixed(1)} кг`;
-    else if (totalKg < 30) nextGoal = `До Gold: ${(30 - totalKg).toFixed(1)} кг`;
-    else if (totalKg < 70) nextGoal = `До VIP: ${(70 - totalKg).toFixed(1)} кг`;
-
-    document.getElementById('uSub').innerText = `Выкуплено: ${totalKg} кг • ${nextGoal}`;
-    document.getElementById('statusLabel').innerText = statusName;
-    document.getElementById('statusBtn').classList.add('st-' + statusName);
-
-    document.getElementById('mKm').innerText = `${userKm} км`;
-    document.getElementById('mKg').innerText = `${freeKg} кг`;
-    document.getElementById('mRefRub').innerText = `${refRub} ₽`;
-    document.getElementById('mRefsCnt').innerText = `${refsCnt}`;
-    document.getElementById('refCountTitle').innerText = `${refsCnt}`;
-    document.getElementById('kmLbl').innerText = `${userKm} км`;
-    document.getElementById('kmFill').style.width = `${Math.min(100, (userKm / 1000) * 100)}%`;
-    document.getElementById('refPctBadge').innerText = `Кэшбэк: ${refPct}%`;
-
-    const speeds = { BRONZE: 'Стандарт', SILVER: 'Ускоренный', GOLD: '⚡ Приоритет', VIP: '🔥 VIP 24/7' };
-    document.getElementById('speedBadge').innerText = speeds[statusName] || 'Стандарт';
-    const activeTier = document.getElementById('card-' + statusName);
-    if (activeTier) activeTier.classList.add('active');
-
-    const fBox = document.getElementById('friendsList');
-    if (refsRaw) {
-      fBox.innerHTML = refsRaw.split(';').filter(Boolean).map(row => {
-        const [fname, fkg, fsum] = row.split(':');
-        const bonus = Math.round((parseFloat(fsum) || 0) * (refPct / 100));
-        return `<div class="friend-row"><div><div class="friend-name">👤 ${fname}</div><div class="friend-sub">Заказал: ${fkg || 0} кг (на ${fsum || 0} ₽)</div></div><div class="friend-bonus">+${bonus} ₽</div></div>`;
-      }).join('');
-    } else {
-      fBox.innerHTML = `<div style="font-size:12px; color:var(--muted); text-align:center; padding:12px; background:var(--glass); border-radius:12px;">Пока нет приглашённых друзей с заказами.</div>`;
-    }
-
-    function goTab(id) {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-      document.getElementById('tab-' + id).classList.add('active');
-      document.getElementById('nav-' + id).classList.add('active');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function openStatusTab() { goTab('status'); }
-
-    function recalc() {
-      const cny = parseFloat(document.getElementById('cny').value) || 0;
-      const w = parseFloat(document.getElementById('weight').value) || 0;
-      const useRef = document.getElementById('useRef').value === 'yes';
-      const goods = Math.round(cny * rate);
-      const delivRaw = Math.round(w * kgPrice);
-      const discRub = Math.round(delivRaw * (statusDisc / 100));
-      const appliedRef = useRef ? Math.min(refRub, delivRaw - discRub) : 0;
-      const finalDeliv = Math.max(0, delivRaw - discRub - appliedRef);
-      const total = goods + finalDeliv;
-      document.getElementById('receiptBox').innerHTML = `
-        <div class="r-line"><span>Вещь (${cny} ¥ × ${rate} ₽):</span><b>${goods} ₽</b></div>
-        <div class="r-line"><span>Доставка (${w} кг × ${kgPrice} ₽):</span><b>${delivRaw} ₽</b></div>
-        <div class="r-line"><span>Скидка статуса (${statusDisc}%) + реф:</span><b style="color:#10b981;">-${discRub + appliedRef} ₽</b></div>
-        <div class="r-sum"><span>Итого к оплате:</span><span>~${total} ₽</span></div>
-      `;
-      return total;
-    }
-
-    function sendRequest() {
-      const item = document.getElementById('item').value.trim();
-      if (!item) { tg.showAlert('Укажите название или описание вещи!'); return; }
-      const btn = document.getElementById('sendBtn');
-      btn.innerText = 'Отправка...'; btn.disabled = true;
-      const dataStr = JSON.stringify({
-        a: 'ord',
-        i: item.slice(0, 120),
-        l: document.getElementById('link').value.trim().slice(0, 220) || 'Не указана',
-        s: document.getElementById('size').value.trim().slice(0, 40) || 'Не указан',
-        c: document.getElementById('cny').value || '0',
-        w: document.getElementById('weight').value || '1',
-        t: recalc(),
-        st: statusName
-      });
-      tg.sendData(dataStr);
-    }
-
-    function exchangeKm() {
-      if (userKm < 1000) { tg.showAlert(`Недостаточно километров! У вас ${userKm} км, нужно 1 000 км.`); return; }
-      tg.sendData(JSON.stringify({ a: 'km' }));
-    }
-
-    function shareLink() {
-      const uid = user?.id || '';
-            const refUrl = 'https:/' + '/t.me/' + botUser + '?start=ref_' + uid;
-      const msg = encodeURIComponent('Заказываю оригинальные вещи с выкупом и доставкой! Лови ссылку:');
-      tg.openTelegramLink('https:/' + '/t.me/share/url?url=' + encodeURIComponent(refUrl) + '&text=' + msg);
-
-                
-
-
-    recalc();
-  </script>
-</body>
-</html>
- 
+<script>
+const tg = window.Telegram ? window.Telegram.WebApp : null;
+if (tg) { tg.expand(); tg.setHeaderColor('#090a0d'); }
+const p = new URLSearchParams(window.location.search);
+const rate = parseFloat(p.get('rate')) || 13.5;
+const kgP = parseFloat(p.get('kg_price')) || 500;
+const uKm = parseInt(p.get('km')) || 0;
+const rRub = parseInt(p.get('ref_rub')) || 0;
+const fKg = parseInt(p.get('fkg')) || 0;
+const tKg = parseFloat(p.get('tkg')) || 0;
+const rCnt = parseInt(p.get('rcnt')) || 0;
+const stName = p.get('status') || 'BRONZE';
 
