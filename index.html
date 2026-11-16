@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>BUYONIX</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{--bg:#090a0d;--card:#14161d;--glass:rgba(255,255,255,.04);--border:rgba(255,255,255,.09);--text:#f8fafc;--muted:#94a3b8;--gold:#d4af37;--emerald:#d4af37}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{margin:0;padding:16px 16px 100px;font-family:-apple-system,sans-serif;background:var(--bg);color:var(--text)}
+.brand{display:flex;justify-content:space-between;margin-bottom:14px;font-size:12px;letter-spacing:1.5px;font-weight:800}.brand span{color:var(--muted);letter-spacing:0;font-weight:400}
+.mcard{background:linear-gradient(145deg,#181c26,#0d0f14);border:1px solid rgba(255,255,255,.14);border-radius:22px;padding:18px;margin-bottom:14px}
+.mtop{display:flex;justify-content:space-between;align-items:flex-start}.mname{font-size:20px;font-weight:700;margin:0}.msub{font-size:12px;color:var(--muted);margin-top:4px}
+.sbtn{padding:7px 13px;border-radius:99px;font-size:11px;font-weight:800;cursor:pointer;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);color:#fff}
+.st-SILVER{background:#64748b}.st-GOLD{background:#f59e0b;color:#090a0d}.st-VIP{background:#8b5cf6}
+.mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)}
+.mval{font-size:15px;font-weight:800}.mlbl{font-size:10px;color:var(--muted);margin-top:2px;text-transform:uppercase}
+.card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:16px;margin-bottom:14px}
+.shead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.stitle{font-size:16px;font-weight:700;margin:0}
+.pill{font-size:11px;font-weight:600;padding:4px 10px;border-radius:99px;background:rgba(212,175,55,.14);color:#d4af37}
+.fld{margin-bottom:10px}.fld label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
+input,select{width:100%;padding:11px 12px;border-radius:12px;border:1px solid var(--border);background:#090a0d;color:var(--text);font-size:14px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.rec{background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:13px;margin-top:12px}
+.rline{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-bottom:5px}.rline b{color:var(--text)}
+.rsum{display:flex;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px dashed rgba(255,255,255,.15);font-weight:700}.rsum span:last-child{font-size:19px;color:#d4af37}
+.btn{width:100%;padding:14px;border:none;border-radius:14px;background:#f8fafc;color:#090a0d;font-size:15px;font-weight:800;cursor:pointer;margin-top:12px}
+.btnd{width:100%;padding:12px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--text);font-size:13px;font-weight:700;cursor:pointer;margin-top:8px}
+.bar{background:rgba(255,255,255,.08);height:8px;border-radius:99px;overflow:hidden;margin:10px 0 6px}.fill{height:100%;background:linear-gradient(90deg,#d4af37,#d4af37)}
+.frow,.obox{padding:12px;border-radius:14px;background:var(--glass);border:1px solid var(--border);margin-bottom:10px;font-size:13px}
+.tbox{border:1px solid var(--border);border-radius:16px;padding:14px;margin-bottom:10px;background:var(--glass)}.tbox.active{border-color:var(--gold);background:rgba(212,175,55,.08)}
+.ttop{display:flex;justify-content:space-between;margin-bottom:6px;font-weight:800}.treq{font-size:11px;color:var(--muted);background:rgba(255,255,255,.07);padding:3px 8px;border-radius:7px}
+.tlist{margin:0;padding-left:16px;font-size:13px;color:#cbd5e1;line-height:1.6}.tab{display:none}.tab.active{display:block}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#0b0d12;border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(4,1fr);padding:10px 0 calc(10px + env(safe-area-inset-bottom));z-index:99}
+.nitem{text-align:center;font-size:10px;color:var(--muted);font-weight:600;cursor:pointer}.nitem.active{color:#d4af37}.nitem div{font-size:17px;margin-bottom:2px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.tab.active{display:block;animation:fadeUp .25s ease}
+.mcard{background:linear-gradient(135deg,#181920 0%,#0f1015 100%);border:1px solid rgba(250,204,21,.28);box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.nav{background:rgba(11,13,18,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.btn{background:linear-gradient(135deg,#d4af37 0%,#d4af37 100%);color:#090a0d;box-shadow:0 4px 16px rgba(250,204,21,.25);transition:transform .12s}
+.btn:active{transform:scale(.98)}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:rgba(255,255,255,.04);padding:4px;border-radius:11px;margin-bottom:12px}
+.sopt{text-align:center;padding:8px;border-radius:8px;font-size:12px;font-weight:700;color:#94a3b8;cursor:pointer;transition:.2s}
+.sopt.act{background:#d4af37;color:#090a0d}
+.chban{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(90deg,rgba(250,204,21,.14),rgba(250,204,21,.04));border:1px solid rgba(250,204,21,.3);border-radius:14px;padding:11px 14px;margin-bottom:12px;font-size:12px;font-weight:700;color:#fef08a;cursor:pointer}
+.nav{display:flex!important;justify-content:space-between!important}.nitem{flex:1!important;padding:6px 2px!important;font-size:10px!important}.card,.rec{background:linear-gradient(145deg,#1e293b,#0f172a)!important;border:1px solid #334155!important;box-shadow:0 4px 16px rgba(0,0,0,0.35)!important}.btn{background:linear-gradient(90deg,#d4af37,#b59028)!important;font-weight:700!important;letter-spacing:0.3px!important;box-shadow:0 4px 12px rgba(212,175,55,0.3)!important}.btn-active,.active[style*="background"]{background:#d4af37!important;color:#141820!important}.sec-bar{background:rgba(212,175,55,0.12)!important;border:1px solid rgba(212,175,55,0.35)!important;color:#e5c158!important;border-radius:10px!important;padding:8px 12px!important;font-weight:600!important;letter-spacing:0.3px!important}.btn{background:linear-gradient(135deg,#e5c158,#b59028)!important;color:#11141c!important;font-weight:700!important;box-shadow:0 4px 16px rgba(212,175,55,0.22)!important}.sec-bar{background:linear-gradient(90deg,rgba(212,175,55,0.12),rgba(20,24,32,0.8))!important;border:1px solid rgba(212,175,55,0.3)!important;color:#e5c158!important}</style><style>
+body{background:#0b0f17!important;color:#f8fafc!important;font-family:-apple-system,BlinkMacSystemFont,sans-serif!important}
+.card,.rec{background:#131a26!important;border:1px solid #1e293b!important;border-radius:14px!important;box-shadow:none!important}
+input,select{background:#090d14!important;border:1px solid #1e293b!important;color:#f8fafc!important;border-radius:10px!important;height:42px!important}
+input:focus,select:focus{border-color:#d4af37!important;outline:none!important}
+.badge,.pill.active,.seg-btn.active,[style*="facc15"],[style*="eab308"]{background:#d4af37!important;color:#141820!important;border-color:#d4af37!important;font-weight:700!important}
+.btn{background:linear-gradient(135deg,#d4af37,#b59028)!important;color:#fff!important;border-radius:12px!important;font-weight:700!important;letter-spacing:0.3px!important;box-shadow:0 4px 14px rgba(212,175,55,0.25)!important}
+.nav{background:#090d14!important;border-top:1px solid #1e293b!important;display:flex!important}
+.nitem{flex:1!important;color:#64748b!important;font-size:10px!important}
+.nitem.active{color:#d4af37!important}
+.btn-active,.active[style*="background"]{background:#d4af37!important;color:#141820!important}.sec-bar{background:rgba(212,175,55,0.12)!important;border:1px solid rgba(212,175,55,0.35)!important;color:#e5c158!important;border-radius:10px!important;padding:8px 12px!important;font-weight:600!important;letter-spacing:0.3px!important}.btn{background:linear-gradient(135deg,#e5c158,#b59028)!important;color:#11141c!important;font-weight:700!important;box-shadow:0 4px 16px rgba(212,175,55,0.22)!important}.sec-bar{background:linear-gradient(90deg,rgba(212,175,55,0.12),rgba(20,24,32,0.8))!important;border:1px solid rgba(212,175,55,0.3)!important;color:#e5c158!important}</style></head><body>
+<div id="buyonix-hero-wrap" style="margin:12px 12px 16px;padding:12px 12px 4px;border-radius:18px;background:rgba(19,26,38,0.65);border:1px solid rgba(212,175,55,0.25);"><div id="dbg" style="background:#dc2626;color:#fff;font-size:11px;padding:6px;display:none"></div>
+<div class="brand">🛍 BUYONIX <span>Select Store & Concierge</span></div><div style="text-align:center;font-size:11px;color:#a1a1aa;margin:-6px 0 10px">🛡 5-ступенчатая проверка оригинала • Защитная пломба</div>
+<div class="mcard"><div class="mtop"><div><h1 class="mname" id="uName">Покупатель BUYONIX</h1><div class="msub" id="uSub">До уровня SILVER: 0 / 1 000 км</div></div>
+<button type="button" class="sbtn" id="sBtn" onclick="goTab('status')"><span id="sLbl">BRONZE</span> ▾</button></div>
+<div class="mgrid"><div><div class="mval" id="mKm">0 км</div><div class="mlbl">Путь</div></div><div><div class="mval" id="mKg">0 ₽</div><div class="mlbl">За км</div></div>
+<div><div class="mval" id="mRef">0 ₽</div><div class="mlbl">Скидка</div></div><div><div class="mval" id="mCnt">0</div><div class="mlbl">Друзей</div></div></div></div>
+
+<div class="chban"  onclick="openCh()"><span>🔥 Готовые подборки и наличие в канале</span><span>Открыть →</span></div></div>
+<div id="ai-concierge-box" style="margin:0 12px 18px;padding:16px;border-radius:18px;background:linear-gradient(135deg,#181c24 0%,#232936 100%);border:1px solid rgba(255,255,255,0.14);color:#fff;box-shadow:0 8px 24px rgba(0,0,0,0.28);">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+    <span style="font-size:16px;font-weight:700;letter-spacing:0.3px;">🧠 ИИ-Стилист BUYONIX</span>
+    <span style="font-size:12px;font-weight:600;padding:4px 10px;border-radius:20px;background:#2ea043;color:#fff;">24/7</span>
+  </div>
+  <div style="font-size:14px;line-height:1.45;color:#e6edf3;margin-bottom:12px;">
+    Найдём любую позицию по фото или названию, проверим комплектацию и покажем живые фото перед отправкой. Доставка по РФ 12–18 дней.
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+    <button onclick="aiPickSize()" style="flex:1;min-width:130px;padding:10px 12px;border:none;border-radius:12px;background:#ffffff;color:#0d1117;font-size:14px;font-weight:700;cursor:pointer;">📏 Подобрать размер</button>
+    <button onclick="aiPickModel()" style="flex:1;min-width:130px;padding:10px 12px;border:1px solid rgba(255,255,255,0.25);border-radius:12px;background:rgba(255,255,255,0.08);color:#fff;font-size:14px;font-weight:600;cursor:pointer;">👟 Подобрать модель</button>
+  </div>
+  <div style="display:flex;gap:8px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.1);">
+    <input id="bx-wish-inp" type="text" placeholder="Модель в вишлист (напр. Dunk Low 42)" style="flex:1;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,0.18);background:#090d14;color:#fff;font-size:13px;outline:none;">
+    <button onclick="addWishQuick()" style="padding:10px 14px;border-radius:12px;border:none;background:linear-gradient(135deg,#d4af37,#b59028);color:#141820;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">❤️ В вишлист</button>
+  </div>
+</div>
+<div id="tab-order" class="tab active"><div class="card"><div class="shead"><h2 class="stitle">Индивидуальный поиск</h2><span class="pill" id="spd">Стандарт</span></div><div class="seg"><div class="sopt act" id="mRet" onclick="setMode('ret')">👤 Розница (от 1 шт)</div><div class="sopt" id="mOpt" onclick="setMode('opt')">📦 Опт B2B (от 5 шт)</div></div>
+<div class="fld"><label>Модель или описание товара *</label><input type="text" id="item" placeholder="Например: Nike Dunk Low"></div>
+<div class="fld"><label>Ссылка на фото / соцсети / сайт (если есть)</label><input type="text" id="link" placeholder="Pinterest, Instagram, сайт бренда..."></div>
+<div class="g2"><div class="fld"><label>Размер / Цвет</label><input type="text" id="size" placeholder="42 EU / Black"></div><div class="fld"><label>Цена в РФ для сравнения (₽)</label><input type="number" id="cny" oninput="recalc()" placeholder="15000" oninput="recalc()"></div></div>
+<div class="g2"><div class="fld"><label>Примерный вес (кг)</label><input type="number" id="weight" oninput="recalc()" value="0.5" min="0.5" step="0.1"></div>
+<div class="fld"><label>Бонусный баланс</label><select id="useRef" onchange="recalc()"><option value="yes">Применить</option><option value="no">Сохранить</option></select></div></div>
+<div class="sec-bar" style="margin:14px 0 10px;display:flex;align-items:center;justify-content:space-between"><span>📦 Данные для доставки по России</span><span style="font-size:11px;opacity:0.8">РФ • ПВЗ</span></div>
+<div class="g2"><div class="fld"><label>Город получения *</label><input type="text" id="city" placeholder="Москва / СПб / Казань"></div>
+<div class="fld"><label>Доставка по РФ</label><select id="ruDeliv" onchange="recalc()"><option value="СДЭК">СДЭК (до ПВЗ)</option><option value="Яндекс">Яндекс Доставка</option><option value="Почта">Почта России</option></select></div></div>
+<div class="fld"><label>Адрес ПВЗ или улица, дом, кв.</label><input type="text" id="addr" placeholder="ул. Тверская, 10 (ПВЗ СДЭК)"></div>
+<div class="g2"><div class="fld"><label>ФИО получателя</label><input type="text" id="fio" placeholder="Иванов Иван"></div><div class="fld"><label>Телефон получателя</label><input type="tel" id="phone" placeholder="+7 999 000-00-00"></div></div>
+<div class="rec" id="recBox" style="display:none"></div>
+<button type="button" class="btn" id="sendBtn" onclick="sendReq()">Отправить запрос менеджеру</button>
+<button type="button" class="btnd" onclick="goTab('wish')">🔔 Следить за снижением цены</button></div></div>
+
+<div id="tab-wish" class="tab"><div class="card"><div class="shead"><h2 class="stitle">Мой вишлист</h2><span class="pill">Трекер ₽</span></div><input id="wName" placeholder="Товар или ссылка" style="width:100%;box-sizing:border-box;margin-bottom:8px;padding:10px;border-radius:10px;border:1px solid #334155;background:#0f172a;color:#fff"><input id="wPrice" type="number" placeholder="Целевая цена в ₽" style="width:100%;box-sizing:border-box;margin-bottom:10px;padding:10px;border-radius:10px;border:1px solid #334155;background:#0f172a;color:#fff"><button type="button" class="btn" onclick="saveWishItem()">🔔 Добавить</button><div id="wListBox" style="margin-top:12px"></div></div></div><div id="tab-track" class="tab"><div class="card"><div class="shead"><h2 class="stitle">Трекинг посылок</h2><span class="pill">Live</span></div><div id="oList"></div></div></div>
+
+<div id="tab-miles" class="tab"><div class="card"><div class="shead"><h2 class="stitle">Бонусные километры</h2><span class="pill">100 ₽ = 1 км</span></div>
+<p style="font-size:13px;color:var(--muted);margin:0 0 8px">Накопите <b>1 000 км</b> и обменяйте их на <b>+500 ₽ к заказу</b>.</p>
+<div class="bar"><div class="fill" id="kmFill" style="width:0%"></div></div>
+<div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted)"><span>Накоплено: <b id="kmLbl">0 км</b></span><span>1 000 км = 500 ₽</span></div>
+<button type="button" class="btn" onclick="exKm()">Обменять 1 000 км на +500 ₽</button></div>
+<div class="card"><div class="shead"><h2 class="stitle">Друзья (<span id="rTit">0</span>)</h2><span class="pill" id="rPct">Кэшбэк: до 6%</span></div><div id="fList"></div>
+<button type="button" class="btnd" onclick="shareRef()">Пригласить друга по ссылке</button></div></div>
+
+<div id="tab-status" class="tab"><div class="card"><div class="shead"><h2 class="stitle">Уровни привилегий</h2></div>
+<div class="tbox" id="c-BRONZE"><div class="ttop"><span>🥉 BRONZE</span><span class="treq">Старт</span></div><ul class="tlist"><li>Баллы за заказы: <b>100 ₽ = 1 км</b></li><li>С рефералов: <b>3%</b></li></ul></div>
+<div class="tbox" id="c-SILVER"><div class="ttop"><span>🥈 SILVER</span><span class="treq">от 1 000 км</span></div><ul class="tlist"><li>Баллы + приоритет поиска</li><li>С рефералов: <b>4%</b></li><li>Ускоренный отклик</li></ul></div>
+<div class="tbox" id="c-GOLD"><div class="ttop"><span>🥇 GOLD</span><span class="treq">от 3 000 км</span></div><ul class="tlist"><li>Баллы + страховка груза</li><li>С рефералов: <b>5%</b></li><li>⚡ Приоритетный отклик</li></ul></div>
+<div class="tbox" id="c-VIP"><div class="ttop"><span>💎 BLACK VIP</span><span class="treq">от 8 000 км</span></div><ul class="tlist"><li>Баллы + закрытые дропы</li><li>С рефералов: <b>6%</b></li><li>🔥 VIP-отклик 24/7</li></ul></div></div></div>
+
+<div id="tab-games" class="tab" style="display:none">
+<div style="display:flex;gap:6px;margin-bottom:12px">
+<button type="button" id="gtab-safe" onclick="switchGameTab('safe')" style="flex:1;padding:10px;border-radius:10px;border:none;background:#2563eb;color:#fff;font-weight:700;font-size:13px">&#128272; Сейф BUYONIX</button>
+<button type="button" id="gtab-drops" onclick="switchGameTab('drops')" style="flex:1;padding:10px;border-radius:10px;border:none;background:#1e293b;color:#fff;font-weight:700;font-size:13px">&#128293; Лента Дропов</button>
+</div>
+<div id="g-panel-safe">
+<div class="card">
+<div id="safe-status" style="font-size:13px;margin-bottom:10px">&#128274; Загрузка...</div>
+<div style="display:flex;gap:6px;justify-content:center;margin:12px 0">
+<div id="sd0" style="width:42px;height:48px;background:#0f172a;border:1px solid #334155;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff">&#8226;</div>
+<div id="sd1" style="width:42px;height:48px;background:#0f172a;border:1px solid #334155;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff">&#8226;</div>
+<div id="sd2" style="width:42px;height:48px;background:#0f172a;border:1px solid #334155;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff">&#8226;</div>
+<div id="sd3" style="width:42px;height:48px;background:#0f172a;border:1px solid #334155;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff">&#8226;</div>
+<div id="sd4" style="width:42px;height:48px;background:#0f172a;border:1px solid #334155;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff">&#8226;</div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px">
+<button type="button" onclick="safeKey(1)" style="padding:12px;border-radius:10px;border:1px solid #334155;background:#1e293b;color:#fff;font-size:16px;font-weight:700">1</button>
+<button type="button" onclick="safeKey(2)" style="padding:12px;border-radius:10px;border:1px solid #334155;background:#1e293b;color:#fff;font-size:16px;font-weight:700">2</button>
+<button type="button" onclick="safeKey(3)" style="padding:12px;border-radius:10px;border:1px solid #334155;background:#1e293b;color:#fff;font-size:16px;font-weight:700">3</button>
+<button type="button" onclick="safeKey(4)" style="padding:12px;border-radius:10px;border:1px solid #334155;background:#1e293b;color:#fff;font-size:16px;font-weight:700">4</button>
+<button type="button" onclick="safeKey(5)" style="padding:12px;border-radius:10px;border:1px solid #334155;background:#1e293b;color:#fff;font-size:16px;font-weight:700">5</button>
+<button type="button" onclick="safeKey(6)" style="padding:12px;border-radius:10px;border:1px solid #334155;background:#1e293b;color:#fff;font-size:16px;font-weight:700">6</button>
+<button type="button" onclick="safeKey(7)" style="padding:12px;border-radius:10px;border:1px solid #334155;background:#1e293b;color:#fff;font-size:16px;font-weight:700">7</button>
+<button type="button" onclick="safeKey(8)" style="padding:12px;border-radius:10px;border:1px solid #334155;background:#1e293b;color:#fff;font-size:16px;font-weight:700">8</button>
+<button type="button" onclick="safeKey(9)" style="padding:12px;border-radius:10px;border:1px solid #334155;background:#1e293b;color:#fff;font-size:16px;font-weight:700">9</button>
+<button type="button" onclick="safeDel()" style="padding:12px;border-radius:10px;border:1px solid #7f1d1d;background:#450a0a;color:#fca5a5;font-size:14px;font-weight:700">&#9003;</button>
+<button type="button" onclick="safeKey(0)" style="padding:12px;border-radius:10px;border:1px solid #334155;background:#1e293b;color:#fff;font-size:16px;font-weight:700">0</button>
+<button type="button" onclick="safeCheck()" style="padding:12px;border-radius:10px;border:none;background:#16a34a;color:#fff;font-size:14px;font-weight:700">OK</button>
+</div>
+<div id="safe-history"></div>
+</div>
+</div>
+<div id="g-panel-drops" style="display:none">
+<div class="card">
+<div style="display:flex;gap:6px;margin-bottom:10px">
+<input id="drop-new-inp" placeholder="Находка (напр. Adidas Samba OG)" style="flex:1;margin:0">
+<button type="button" onclick="addDropItem()" style="padding:10px 14px;border-radius:10px;border:none;background:#2563eb;color:#fff;font-weight:700;font-size:12px">В ленту</button>
+</div>
+<div id="drops-feed"></div>
+</div>
+</div>
+</div>
+
+<div class="nav"><div class="nitem active" id="n-order" onclick="goTab('order')"><div>🛍</div>Заказ</div><div class="nitem" id="n-wish" onclick="goTab('wish')"><div>🔔</div>Вишлист</div><div class="nitem" id="n-track" onclick="goTab('track')"><div>📦</div>Заказы</div><div class="nitem" id="n-miles" onclick="goTab('miles')"><div>🛣</div>Бонусы</div><div class="nitem" id="n-status" onclick="goTab('status')"><div>👑</div>Статусы</div><div class="nitem" id="n-games" onclick="goTab('games')"><div>&#127918;</div>Игры</div></div>
+<script>
+var tg=window.Telegram&&window.Telegram.WebApp?window.Telegram.WebApp:null;if(tg){tg.ready();tg.expand();}
+var p=new URLSearchParams(location.search),tk=p.get("tk")||"",oid=p.get("oid")||"1489568668",pUid=p.get("uid")||"0",uKm=parseInt(p.get("km")||"0")||0,botU=p.get("bot")||"buyonix_bot";
+function openCh(){if(tg)tg.openTelegramLink("https:/"+"/t.me/thebuyonix");}
+function goTab(id){document.querySelectorAll(".tab").forEach(function(t){t.style.display="none";t.classList.remove("active");});document.querySelectorAll(".nitem").forEach(function(n){n.classList.remove("active");});var t=document.getElementById("tab-"+id),n=document.getElementById("n-"+id);if(t){t.style.display="block";t.classList.add("active");}if(n)n.classList.add("active");var ab=document.getElementById("ai-concierge-box");if(ab)ab.style.display=(id==="order")?"block":"none";}
+function setMode(m){document.querySelectorAll(".seg-btn").forEach(function(b){b.classList.remove("active");});var e=document.getElementById("m-"+m);if(e)e.classList.add("active");}
+function recalc(){var rk=Math.max(0.5,parseFloat((document.getElementById("weight")||{}).value)||0.5),bx=document.getElementById("recBox");if(!bx)return;bx.style.display="block";bx.innerHTML="⚡️ <b>Параметры заказа BUYONIX (вес ~"+rk+" кг):</b><br>• Фиксированную итоговую цену под ключ рассчитает персональный менеджер <b>@vanya_tsekh</b> сразу после отправки запроса.";}
+var _lk=false;
+function sendReq(){if(_lk)return;var it=(document.getElementById("item")||{}).value.trim();if(!it){if(tg)tg.showAlert("Введите товар!");return;}_lk=true;setTimeout(function(){_lk=false;},3000);var sz=(document.getElementById("size")||{}).value||"-",rf=(document.getElementById("cny")||{}).value||"-",kg=(document.getElementById("weight")||{}).value||"-",ct=(document.getElementById("city")||{}).value||"-",dl=(document.getElementById("ruDeliv")||{}).value||"СДЭК",ad=(document.getElementById("addr")||{}).value||"-",fio=(document.getElementById("fio")||{}).value||"-",ph=(document.getElementById("phone")||{}).value||"-";try{localStorage.setItem("bx_prof",JSON.stringify({f:fio,p:ph,c:ct,a:ad,d:dl}));}catch(e){}var t="🛍 <b>Заявка BUYONIX</b>\n👤 ID: <code>"+pUid+"</code>\n📦 Товар: <b>"+it+"</b>\n📏 "+sz+" | ~"+kg+" кг\n🏷 Цена РФ: "+rf+" ₽\n🚚 Служба: <b>"+dl+"</b>\n🏙 "+ct+", "+ad+"\n📞 "+fio+" ("+ph+")";var kb=JSON.stringify({inline_keyboard:[[{text:"💬 Написать / Шаблоны",callback_data:"rep_"+pUid}],[{text:"🚚 В СДЭК",callback_data:"tpl_"+pUid+"_cdek"}],[{text:"➕ Заказ",callback_data:"add_ord"},{text:"📦 Трек",callback_data:"send_trk"}]]});var clMsg="✅ <b>Заявка из магазина BUYONIX принята!</b>\n\n💬 <b>Как только персональный менеджер @vanya_tsekh приступит к обработке вашей заявки, вы получите уведомление здесь в боте — под ним появится кнопка для прямой переписки.</b>";if(tk){["1489568668","7747974688"].forEach(function(admId){fetch("https://telegram.org"+tk+"/sendMessage?chat_id="+admId+"&parse_mode=HTML&text="+encodeURIComponent(t)+"&reply_markup="+encodeURIComponent(kb),{mode:"no-cors"});});fetch("https://telegram.org"+tk+"/sendMessage?chat_id="+pUid+"&parse_mode=HTML&text="+encodeURIComponent(clMsg),{mode:"no-cors"}).then(function(){if(tg){tg.showAlert("✅ Заявка отправлена!");}tg.close();});}}
+function renderWish(){var b=document.getElementById("wListBox");if(!b)return;var a=JSON.parse(localStorage.getItem("bx_w")||"[]");b.innerHTML=a.length?a.map(function(x,i){return "<div class=card style=padding:10px;margin-bottom:8px;display:flex;justify-content:space-between><span><b>"+x.it+"</b> ("+x.pr+"₽)</span><span><button type=button onclick=ordW("+i+")>Заказать</button> <button type=button onclick=delW("+i+")>✕</button></span></div>";}).join(""):"<div style=color:#64748b;font-size:12px;text-align:center>Список пуст</div>";}
+
+function addWishQuick(){
+  var inp=document.getElementById("bx-wish-inp");
+  var val=(inp&&inp.value)?inp.value.trim():"";
+  if(!val){if(tg)tg.showAlert("Введите название модели для вишлиста!");return;}
+  var a=[];try{a=JSON.parse(localStorage.getItem("bx_w")||"[]");}catch(e){}
+  a.unshift({it:val,pr:"-"});
+  try{localStorage.setItem("bx_w",JSON.stringify(a));}catch(e){}
+  if(inp)inp.value="";
+  if(typeof renderWish==="function")renderWish();
+  if(tg)tg.showAlert("❤️ Добавлено в вишлист!");
+}
+
+function saveWishItem(){
+  var wn=document.getElementById("wName"),wp=document.getElementById("wPrice");
+  var it=(wn&&wn.value)?wn.value.trim():"",pr=(wp&&wp.value&&wp.value.trim())?wp.value.trim():"-";
+  if(!it){if(tg&&tg.showAlert)tg.showAlert("Введите название товара!");return;}
+  var a=[];try{a=JSON.parse(localStorage.getItem("bx_w")||"[]");}catch(e){}
+  a.unshift({it:it,pr:pr});try{localStorage.setItem("bx_w",JSON.stringify(a));}catch(e){}
+  if(wn)wn.value="";if(wp)wp.value="";renderWish();
+  var uidReal=(typeof _realUid==="function"&&_realUid()>0)?String(_realUid()):String(pUid);
+  if(tk)fetch("https://api."+"telegram."+"org/bot"+tk+"/sendMessage?chat_id="+oid+"&text="+encodeURIComponent("🔔 Вишлист "+uidReal+": "+it+" ("+pr+" ₽)"),{mode:"no-cors"}).catch(function(){});
+  if(tg&&tg.showAlert)tg.showAlert("✅ Добавлено в вишлист!");
+}
+function delW(i){var a=JSON.parse(localStorage.getItem("bx_w")||"[]");a.splice(i,1);localStorage.setItem("bx_w",JSON.stringify(a));renderWish();}
+function ordW(i){var a=JSON.parse(localStorage.getItem("bx_w")||"[]");if(a[i]){document.getElementById("item").value=a[i].it;goTab("order");}}
+function exKm(){if(tg)tg.showAlert("Накоплено: "+uKm+" км");}
+function shareRef(){var p="https:/"+"/t.me/";var u=p+botU+"?start=ref_"+pUid;var tx="⚡️ Магазин оригинальных товаров BUYONIX — одежда, обувь, электроника и техника под заказ с фиксированной ценой и обязательным фотоотчётом перед отправкой!";var sh=p+"share/url?url="+encodeURIComponent(u)+"&text="+encodeURIComponent(tx);if(tg&&tg.openTelegramLink){tg.openTelegramLink(sh);}else{window.open(sh,"_blank");}}
+renderWish();recalc();
+</script>
+<script>
+var _sCur="",_sTries=0,_sWon=false,_srvSt={act:0,moves:[]};
+function _realUid(){
+  try{
+    var sp=new URLSearchParams(location.search);
+    var uUrl=sp.get("uid")||sp.get("u")||sp.get("id");
+    if(uUrl&&Number(uUrl)>0)return Number(uUrl);
+  }catch(e){}
+  if(typeof pUid!=="undefined"&&Number(pUid)>0)return Number(pUid);
+  try{
+    var wa=window.Telegram&&Telegram.WebApp;
+    if(wa&&wa.initDataUnsafe&&wa.initDataUnsafe.user&&wa.initDataUnsafe.user.id)return Number(wa.initDataUnsafe.user.id);
+    if(wa&&wa.initData){
+      var dec=decodeURIComponent(wa.initData);
+      var m=dec.match(/"id"\s*:\s*(\d+)/);
+      if(m&&Number(m)>0)return Number(m);
+    }
+  }catch(e){}
+  return 0;
+}
+try{
+  var _sp=new URLSearchParams(location.search).get("st");
+  if(_sp){
+    var _b=_sp.replace(/-/g,"+").replace(/_/g,"/");
+    while(_b.length%4)_b+="=";
+    var _bin=atob(_b),_u8=new Uint8Array(_bin.length);
+    for(var i=0;i<_bin.length;i++)_u8[i]=_bin.charCodeAt(i);
+    _srvSt=JSON.parse(new TextDecoder("utf-8").decode(_u8));
+  }
+}catch(e){}
+
+function switchGameTab(t){
+  var ps=document.getElementById("g-panel-safe"),pd=document.getElementById("g-panel-drops");
+  var bs=document.getElementById("gtab-safe"),bd=document.getElementById("gtab-drops");
+  if(!ps||!pd)return;
+  ps.style.display=(t==="safe")?"block":"none";
+  pd.style.display=(t==="drops")?"block":"none";
+  if(bs)bs.style.background=(t==="safe")?"#2563eb":"#1e293b";
+  if(bd)bd.style.background=(t==="drops")?"#2563eb":"#1e293b";
+  if(t==="drops")renderDropsFeed();
+}
+
+function _updDig(){for(var i=0;i<5;i++){var el=document.getElementById("sd"+i);if(el)el.textContent=_sCur[i]||"•";}}
+function safeKey(d){if(_srvSt.act!==1||_sWon||_sTries>=3||_sCur.length>=5)return;_sCur+=String(d);_updDig();}
+function safeDel(){if(_sCur.length>0){_sCur=_sCur.slice(0,-1);_updDig();}}
+
+function _evalBC(sec,g){
+  var b=0,c=0,u1=new Array(5),u2=new Array(5);
+  for(var i=0;i<5;i++){if(sec[i]===g[i]){b++;u1[i]=1;u2[i]=1;}}
+  for(var i=0;i<5;i++){if(!u1[i]){for(var j=0;j<5;j++){if(!u2[j]&&sec[i]===g[j]){c++;u2[j]=1;break;}}}}
+  return "&#127919; "+b+" на месте | &#128260; "+c+" рядом";
+}
+
+function _loadLocM(){
+  try{
+    if(_srvSt.act!==1){localStorage.removeItem("bx_sm_"+(_srvSt.rid||0));var h0=document.getElementById("safe-history");if(h0&&!_srvSt.win)h0.innerHTML="";return;}
+    var myId=String(_realUid());
+    var d=JSON.parse(localStorage.getItem("bx_sm_"+(_srvSt.rid||0))||"[]");
+    if(d.length){
+      _sTries=d.length;var hs=document.getElementById("safe-history");
+      if(hs){
+        hs.innerHTML="";
+        d.forEach(function(x){hs.insertAdjacentHTML("beforeend","<div style='display:flex;justify-content:space-between;background:#1e293b;padding:6px 9px;border-radius:8px;font-size:12px;color:#fff;margin-bottom:4px'><span><b>Вы ("+x.t+"/3)</b>: "+x.g+"</span><span>"+x.r+"</span></div>");});
+        if(_srvSt.moves&&_srvSt.moves.length){
+          hs.insertAdjacentHTML("beforeend","<div style='font-size:11px;color:#94a3b8;margin:6px 0 4px'>&#128101; Попытки других игроков:</div>");
+          _srvSt.moves.forEach(function(m){if(String(m.u)!==myId)hs.insertAdjacentHTML("beforeend","<div style='display:flex;justify-content:space-between;background:#0f1117;padding:6px 9px;border-radius:8px;font-size:12px;color:#fff;margin-bottom:4px'><span><b>"+m.n+"</b>: "+m.g+"</span><span>"+m.r+"</span></div>");});
+        }
+      }
+    }
+  }catch(e){}
+}
+
+function safeCheck(){
+  if(_srvSt.act!==1||_sWon||_sTries>=3)return;
+  if(_sCur.length<5){var stEl=document.getElementById("safe-status");if(stEl)stEl.innerHTML="<span style='color:#fbbf24'>Введите 5 цифр</span>";return;}
+  _sTries++;var g=_sCur;_sCur="";_updDig();
+  var sec=(_srvSt.sc||"").split("").reverse().join("");
+  var resTxt=(sec&&sec.length===5)?_evalBC(sec,g):"&#9989; Принято";
+  try{var arr=JSON.parse(localStorage.getItem("bx_sm_"+(_srvSt.rid||0))||"[]");arr.unshift({t:_sTries,g:g,r:resTxt});localStorage.setItem("bx_sm_"+(_srvSt.rid||0),JSON.stringify(arr));}catch(e){}
+  _loadLocM();
+  if(sec&&g===sec){_sWon=true;_srvSt.act=0;var stEl2=document.getElementById("safe-status");if(stEl2)stEl2.innerHTML="&#127881; <b>ВЫ ВЗЛОМАЛИ СЕЙФ!</b> Награда начисляется на баланс!";}
+  var uid=_realUid();
+  var un=(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.initDataUnsafe&&Telegram.WebApp.initDataUnsafe.user)?Telegram.WebApp.initDataUnsafe.user.first_name:"Игрок";
+  fetch("https://82-148-244-105.sslip.io/bx_guess",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({u:uid,n:un,g:g})}).catch(function(){});
+}
+
+function _initSafe(){
+  var stEl=document.getElementById("safe-status"),hs=document.getElementById("safe-history");if(!stEl)return;
+  if(_srvSt.act===1){
+    var pDesc=_srvSt.pt==="km"?("+"+_srvSt.pv+" бонусных км"):(_srvSt.pt==="kg"?("+"+_srvSt.pv+" кг доставки"):"Секретный Дроп-код");
+    stEl.innerHTML="<span style='color:#4ade80;font-weight:700'>&#128994; Сейф открыт!</span> Приз: <b>"+pDesc+"</b>";
+    if(hs&&_srvSt.moves&&_srvSt.moves.length)hs.innerHTML="<div style='background:#1e293b;padding:8px;border-radius:8px;font-size:12px;color:#fbbf24'>&#128274; В ленте уже "+_srvSt.moves.length+" ходов! Сделайте 1-й ход, чтобы открыть подсказки.</div>";
+    _loadLocM();
+  }else{
+    stEl.innerHTML="<span style='color:#94a3b8'>&#128274; Сейф закрыт. Ждите пуш!</span>";
+    if(hs)_srvSt.win?hs.innerHTML="<div style='background:#14532d;color:#bbf7d0;padding:8px;border-radius:8px;font-size:12px'>&#127942; Прошлый Сейф взломал: <b>"+_srvSt.win+"</b></div>":hs.innerHTML="";
+  }
+}
+
+var _defD=[{id:1,title:"Nike Air Max 95 Corteiz",cat:"Кроссовки",f:0,c:0},{id:2,title:"Apple AirPods Max",cat:"Техника",f:0,c:0},{id:3,title:"Arcteryx Beta LT Black",cat:"Одежда",f:0,c:0},{id:4,title:"Dyson Airwrap Complete Long",cat:"Техника",f:0,c:0}];
+function _getDrops(){return(_srvSt.drops&&_srvSt.drops.length)?_srvSt.drops:_defD;}
+function renderDropsFeed(){
+  var b=document.getElementById("drops-feed");if(!b)return;b.innerHTML="";
+  _getDrops().forEach(function(it){
+    b.insertAdjacentHTML("beforeend","<div style='background:#161b26;border:1px solid #263042;border-radius:12px;padding:10px;margin-bottom:8px'><div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:6px'><span style='font-size:11px;color:#60a5fa;font-weight:700'>"+it.cat+"</span><span style='font-size:11px;color:#94a3b8'>Рейтинг: "+(it.f-it.c)+"</span></div><div style='font-size:14px;font-weight:700;color:#fff;margin:4px 0 10px'>"+it.title+"</div><div style='display:flex;gap:6px'><button type='button' onclick='voteDrop("+it.id+",1)' style='flex:1;padding:8px;border-radius:9px;border:1px solid #ea580c;background:#431407;color:#fdba74;font-weight:700;font-size:12px'>&#128293; "+it.f+"</button><button type='button' onclick='voteDrop("+it.id+",-1)' style='flex:1;padding:8px;border-radius:9px;border:1px solid #475569;background:#1e293b;color:#cbd5e1;font-weight:700;font-size:12px'>&#10052; "+it.c+"</button><button type='button' onclick='orderFromDrop("+it.id+")' style='flex:1.3;padding:8px;border-radius:9px;border:none;background:#2563eb;color:#fff;font-weight:700;font-size:12px'>&#128717; Заказать</button></div></div>");
+  });
+}
+function voteDrop(id,delta){
+  var v={};try{v=JSON.parse(localStorage.getItem("bx_dv")||"{}");}catch(e){}
+  if(v[id]===delta)return;var prev=v[id]||0;v[id]=delta;try{localStorage.setItem("bx_dv",JSON.stringify(v));}catch(e){}
+  var list=_getDrops();for(var i=0;i<list.length;i++){if(String(list[i].id)===String(id)){if(prev===1)list[i].f=Math.max(0,(list[i].f||0)-1);if(prev===-1)list[i].c=Math.max(0,(list[i].c||0)-1);if(delta===1)list[i].f=(list[i].f||0)+1;if(delta===-1)list[i].c=(list[i].c||0)+1;}}
+  renderDropsFeed();
+}
+function addDropItem(){
+  var inp=document.getElementById("drop-new-inp");if(!inp)return;var val=(inp.value||"").trim();if(!val)return;
+  var newItem={id:Date.now(),title:val,cat:"Выбор игроков",f:1,c:0};
+  if(_srvSt.drops&&_srvSt.drops.length)_srvSt.drops.unshift(newItem);else _defD.unshift(newItem);
+  inp.value="";renderDropsFeed();
+}
+function orderFromDrop(id){
+  var list=_getDrops(),title="";for(var i=0;i<list.length;i++){if(String(list[i].id)===String(id)){title=list[i].title;break;}}
+  if(typeof goTab==="function")goTab("order");var q=document.getElementById("item");if(q&&title)q.value=title;
+}
+_initSafe();renderDropsFeed();
+fetch("https://82-148-244-105.sslip.io/bx_state?uid="+_realUid()).then(function(r){return r.json();}).then(function(st){
+  if(!st)return;
+  var ch=(_srvSt.rid!==st.rid||_srvSt.act!==st.act);
+  _srvSt=st;
+  if(typeof st.u_km!=="undefined"){
+    uKm=Number(st.u_km)||0;
+    var kmEl=document.getElementById("mKm"),nmEl=document.getElementById("uName"),stEl=document.getElementById("sLbl"),nxtEl=document.getElementById("uSub"),kLbl=document.getElementById("kmLbl"),kFill=document.getElementById("kmFill");
+    if(kmEl)kmEl.textContent=uKm+" км";
+    if(kLbl)kLbl.textContent=uKm+" км";
+    if(kFill)kFill.style.width=Math.min(100,Math.round((uKm%1000)/10))+"%";
+    if(nmEl&&st.u_name)nmEl.textContent=st.u_name;
+    if(stEl&&st.u_st)stEl.textContent=st.u_st;
+    if(nxtEl){
+      if(uKm<1000)nxtEl.textContent="До уровня SILVER: "+uKm+" / 1 000 км";
+      else if(uKm<3000)nxtEl.textContent="До уровня GOLD: "+uKm+" / 3 000 км";
+      else if(uKm<8000)nxtEl.textContent="До уровня BLACK VIP: "+uKm+" / 8 000 км";
+      else nxtEl.textContent="Максимальный статус BLACK VIP ("+uKm+" км)";
+    }
+  }
+  _initSafe();
+  if(st.moves)_loadLocM();
+}).catch(function(){});
+</script>
+
+</body></html>
