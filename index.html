@@ -155,7 +155,24 @@ var p=new URLSearchParams(location.search),tk=p.get("tk")||"",oid=p.get("oid")||
 function openCh(){if(tg)tg.openTelegramLink("https:/"+"/t.me/thebuyonix");}
 function goTab(id){document.querySelectorAll(".tab").forEach(function(t){t.style.display="none";t.classList.remove("active");});document.querySelectorAll(".nitem").forEach(function(n){n.classList.remove("active");});var t=document.getElementById("tab-"+id),n=document.getElementById("n-"+id);if(t){t.style.display="block";t.classList.add("active");}if(n)n.classList.add("active");var ab=document.getElementById("ai-concierge-box");if(ab)ab.style.display=(id==="order")?"block":"none";}
 function setMode(m){document.querySelectorAll(".seg-btn").forEach(function(b){b.classList.remove("active");});var e=document.getElementById("m-"+m);if(e)e.classList.add("active");}
-function recalc(){var rk=Math.max(0.5,parseFloat((document.getElementById("weight")||{}).value)||0.5),bx=document.getElementById("recBox");if(!bx)return;var ur=(document.getElementById("useRub")||{}).value||"0",uk=(document.getElementById("useKg")||{}).value||"0";var rT=(ur==="all")?("весь баланс ("+(typeof rRub!=="undefined"?rRub:0)+" ₽)"):(ur+" ₽");var kT=(uk==="all")?("все доступные кг ("+(typeof fKg!=="undefined"?fKg:0)+" кг)"):(uk+" кг");bx.style.display="block";bx.innerHTML="⚡ <b>Параметры заказа BUYONIX (вес ~"+rk+" кг):</b><br>• К резерву бонусов: <b>"+rT+"</b> скидки и <b>"+kT+"</b> доставки (списание после получения заказа).<br>• Фиксированную цену под ключ рассчитает персональный менеджер <b>@vanya_tsekh</b>.";}
+function recalc(){
+  var rk=Math.max(0.5,parseFloat((document.getElementById("weight")||{}).value)||0.5),bx=document.getElementById("recBox");
+  if(!bx)return;
+  var ur=(document.getElementById("useRub")||{}).value||"0";
+  var uk=(document.getElementById("useKg")||{}).value||"0";
+  var availR=(typeof rRub!=="undefined"?Number(rRub||0):0);
+  var availK=(typeof fKg!=="undefined"?Number(fKg||0):0);
+  var discR=(ur==="all")?availR:Math.min(availR,parseInt(ur,10)||0);
+  var discK=(uk==="all")?Math.min(availK,rk):Math.min(availK,Math.min(parseFloat(uk)||0,rk));
+  var rfRaw=parseFloat(String((document.getElementById("cny")||{}).value||"").replace(/[^0-9.]/g,""))||0;
+  var priceLine="";
+  if(rfRaw>0){
+    var netP=Math.max(0,Math.round(rfRaw-discR));
+    priceLine="<br>• Предварительный расчёт: <b>"+Math.round(rfRaw)+" ₽</b> − <b>"+discR+" ₽</b> (скидка) = <b>"+netP+" ₽</b>";
+  }
+  bx.style.display="block";
+  bx.innerHTML="⚡ <b>Параметры заказа BUYONIX (вес ~"+rk+" кг):</b>"+priceLine+"<br>• К резерву бонусов: <b>"+discR+" ₽</b> скидки и <b>"+discK+" кг</b> доставки (списание после получения заказа).<br>• Фиксированную цену под ключ рассчитает персональный менеджер <b>@vanya_tsekh</b>.";
+}
 var _lk=false;
 function sendReq(){
   if(_lk)return;
@@ -171,11 +188,11 @@ function sendReq(){
   var ad=(document.getElementById("addr")||{}).value||"-";
   var fio=(document.getElementById("fio")||{}).value||"-";
   var ph=(document.getElementById("phone")||{}).value||"-";
-  var uidReal=(typeof _realUid==="function"&&_realUid()>0)?_realUid():Number(pUid||0);
+  var uidReal=(typeof _getFastUid==="function"&&_getFastUid()>0)?_getFastUid():((typeof _realUid==="function"&&_realUid()>0)?_realUid():Number(pUid||0));
   try{localStorage.setItem("bx_prof",JSON.stringify({f:fio,p:ph,c:ct,a:ad,d:dl}));}catch(e){}
   fetch("https://82-148-244-105.sslip.io/bx_order",{
     method:"POST",
-    body:JSON.stringify({uid:uidReal,item:it,size:sz,rf:rf,kg:kg,city:ct,deliv:dl,addr:ad,fio:fio,phone:ph})
+    body:JSON.stringify({uid:uidReal,item:it,size:sz,rf:rf,kg:kg,city:ct,deliv:dl,addr:ad,fio:fio,phone:ph,use_rub:(document.getElementById("useRub")?document.getElementById("useRub").value:"0"),use_kg:(document.getElementById("useKg")?document.getElementById("useKg").value:"0")})
   }).then(function(r){return r.json();}).then(function(res){
     if(res&&res.ok===false){
       var bxE=document.getElementById("recBox");
@@ -232,7 +249,7 @@ function exKm(){
       _exLock=false;
       if(d&&d.ok){
         uKm=Number(d.km||0);
-        rRub=Number(d.bal||0);if(typeof uBal!=="undefined")uBal=rRub;document.querySelectorAll("div,span,b").forEach(function(el){if(el.children.length===0&&/СКИДКА/i.test((el.textContent||"").trim())&&el.parentElement){el.parentElement.querySelectorAll("div,span,b").forEach(function(ch){if(ch!==el&&ch.children.length===0&&/₽/.test(ch.textContent||""))ch.textContent=rRub+" ₽";});}});
+        rRub=Number(d.bal||0);if(typeof uBal!=="undefined")uBal=rRub;var _mr2=document.getElementById("mRef");if(_mr2)_mr2.textContent=rRub+" ₽";document.querySelectorAll("div,span,b").forEach(function(el){if(el.children.length===0&&/СКИДКА/i.test((el.textContent||"").trim())&&el.parentElement){el.parentElement.querySelectorAll("div,span,b").forEach(function(ch){if(ch!==el&&ch.children.length===0&&/₽/.test(ch.textContent||""))ch.textContent=rRub+" ₽";});}});
         try{localStorage.setItem("bx_km",String(uKm));localStorage.setItem("bx_bal",String(d.bal||0));}catch(e){}
         var kl=document.getElementById("kmLbl");if(kl)kl.textContent=uKm+" км";if(typeof d!=="undefined"&&typeof d.u_bal!=="undefined"){var _bv=Number(d.u_bal||0);window._bxBal=_bv;document.querySelectorAll("*").forEach(function(el){if(el.children.length===0&&/СКИДКА/i.test((el.textContent||"").trim())&&el.parentElement&&el.parentElement.firstElementChild){el.parentElement.firstElementChild.textContent=_bv+" ₽";}});}
       if(typeof d.u_bal!=="undefined"){
